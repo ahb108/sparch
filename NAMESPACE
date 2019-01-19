@@ -3,6 +3,7 @@
 export(ah2sp)
 export(arrangeSymbols)
 export(buffers)
+export(colRibbon)
 export(flylines)
 export(gExplode)
 export(gradSymbols)
