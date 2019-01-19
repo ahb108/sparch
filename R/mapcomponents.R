@@ -220,6 +220,10 @@ flylines <- function(x, y, xplot, yplot){
     return(fl)
 }
 
+#' Add a custom colour ramp to a plot
+#'
+#' This function gives greater flexibility for the plotting of colour ramps for maps and other plots.
+#'
 #' @export
 #' 
 colRibbon <- function(lut, breaks, xlim, ylim, nticks=3, ticksize=0.3, labels=TRUE, at=NULL, vertical=TRUE, border.box=NULL, col.ticks="black", col.labs="black", lwd.box=1, lwd.ticks=1, lty.box="solid", lty.ticks="solid", offset.labs=0.5, cex.labs=0.7, font.labs=1, ...){
