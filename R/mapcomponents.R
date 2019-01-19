@@ -219,3 +219,37 @@ flylines <- function(x, y, xplot, yplot){
     }
     return(fl)
 }
+
+#' @export
+#' 
+colorRamp <- function(lut, breaks, xlim, ylim, nticks=3, ticksize=0.3, labels=TRUE, at=NULL, vertical=TRUE, border.box=NULL, col.ticks="black", col.labs="black", lwd.box=1, lwd.ticks=1, lty.box="solid", lty.ticks="solid", offset.labs=0.5, cex.labs=0.7, font.labs=1, ...){
+    ##inspired by https://gist.github.com/johncolby/993830#file-colorbar-r
+    ys <- seq(ylim[1], ylim[2], (ylim[2] - ylim[1])/length(lut))
+    for (i in 1:(length(lut))) {
+        rect(xlim[1],ys[i],xlim[2],ys[i+1], col=lut[i], border=NA)
+    }
+    if (labels[1]!=FALSE){
+        yscale <- (ylim[2]-ylim[1])/(breaks[length(breaks)]-breaks[1])
+        if (is.null(at)){
+            labels <- seq(breaks[1], breaks[length(breaks)], len=nticks)
+            at <- ((labels - labels[1])*yscale)+ylim[1]
+        } else {
+            if (class(at)!="numeric"){
+                stop("at must be NULL or a numeric vector of the same length as 'labels'.")
+            }
+            if (!is.numeric(labels[1])){
+                labels <- at
+            }
+            if (length(at) != length(labels)){
+                stop("at must be NULL or a numeric vector of the same length as 'labels'.")
+            }
+            at <- ((at - at[1])*yscale)+ylim[1]
+        }
+        ticksize <- ticksize*(xlim[2]-xlim[1])
+        if (!is.null(border.box)){
+            rect(xlim[1], ylim[1], xlim[2], ylim[2], border=border.box, lwd=lwd.box, lty=lty.box)
+        }
+        segments(x0=rep(xlim[2],length(at)), x1=rep(xlim[2]+ticksize,length(at)), y0=at, col=col.labs)
+        text(x=rep(xlim[2]+ticksize,length(at)), y=at, labels=labels, cex=cex.labs, pos=4, offset=offset.labs)
+    }
+}

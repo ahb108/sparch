@@ -56,24 +56,25 @@ rybcolourmap <- function(range, ...) {
 }
 
 #' @export
-rybcolours <- function(range, sealevel=0, ncolours=100,nbeach=0){
-  stopifnot(is.numeric(range) && length(range)==2)
-  stopifnot(all(is.finite(range)))
-  yr <- colorRampPalette(c("yellow","orangered","darkred"), space="rgb")
-  cb <- colorRampPalette(c("blue","cyan","yellow"), space="rgb")
-  depths <- range[1]
-  peaks <- range[2]
-  dv <- diff(range)/(ncolours - 1)
-  epsilon <- nbeach * dv/2
-  lowtide <- max(sealevel - epsilon, depths)
-  hightide <-  min(sealevel + epsilon, peaks)
-  countbetween <- function(a, b, delta) { max(0, round((b-a)/delta)) }
-  nsea <- countbetween(depths, lowtide, dv)
-  nbeach <- countbetween(lowtide,  hightide, dv)
-  nland <- countbetween(hightide,  peaks, dv)
-  colours <- character(0)
-  if(nsea > 0)  colours <- cb(nsea) # cyan/blue
-  if(nbeach > 0)  colours <- c(colours,rep("yellow",nbeach)) # yellow
-  if(nland > 0)  colours <- c(colours, yr(nland)) # darkred/yellow
-  return(colours)
+rybcolours <- function(range, sealevel=0, ncolours=100, nbeach=0){
+    ## modified from a routine by A. Baddeley
+    stopifnot(is.numeric(range) && length(range)==2)
+    stopifnot(all(is.finite(range)))
+    yr <- colorRampPalette(c("yellow","orangered","darkred"), space="rgb")
+    cb <- colorRampPalette(c("blue","cyan","yellow"), space="rgb")
+    depths <- range[1]
+    peaks <- range[2]
+    dv <- diff(range)/(ncolours - 1)
+    epsilon <- nbeach * dv/2
+    lowtide <- max(sealevel - epsilon, depths)
+    hightide <-  min(sealevel + epsilon, peaks)
+    countbetween <- function(a, b, delta) { max(0, round((b-a)/delta)) }
+    nsea <- countbetween(depths, lowtide, dv)
+    nbeach <- countbetween(lowtide,  hightide, dv)
+    nland <- countbetween(hightide,  peaks, dv)
+    colours <- character(0)
+    if(nsea > 0)  colours <- cb(nsea) # cyan/blue
+    if(nbeach > 0)  colours <- c(colours,rep("yellow",nbeach)) # yellow
+    if(nland > 0)  colours <- c(colours, yr(nland)) # darkred/yellow
+    return(colours)
 }
