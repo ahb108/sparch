@@ -217,3 +217,67 @@ mwvoronoi <- function(pts, ptID, ptWeights=rep(1,nrow(pts)), win=NULL, maxdist=N
 }
 
 ##
+
+#' @export
+polyAngle <- function(x, degsteps=1, type="azi", verbose=TRUE){
+    if (!type %in% c("azi","sp")){
+        stop("type argument must be either azi or sp.")
+    }
+    rotv <- vector(mode="numeric", length=nrow(x))
+    if (length(x)>1 & verbose){
+        print("Calculating dominant polygon angles...")
+        flush.console()
+        pb <- txtProgressBar(min=1, max=length(x), style=3)
+    }
+    for (b in 1:length(x)){
+        if (length(x)>1 & verbose){ setTxtProgressBar(pb, b) }
+        obj <- x[b,]
+        rots <- seq(0,90,degsteps)
+        ht <- abs(bbox(obj)[2,1] - bbox(obj)[2,2])
+        wd <- abs(bbox(obj)[1,1] - bbox(obj)[1,2])
+        area <- ht*wd
+        minarea <- area
+        for (a in 1:length(rots)){
+            allcheck <- elide(obj, rotate=rots[a], center=apply(bbox(obj), 1, mean))
+            thisht <- abs(bbox(allcheck)[2,1] - bbox(allcheck)[2,2])
+            thiswd <- abs(bbox(allcheck)[1,1] - bbox(allcheck)[1,2])
+            thisarea <- thisht*thiswd
+            if (thisarea < minarea){
+                minarea <- thisarea
+                rot <- rots[a]
+            }
+        }
+        obj1 <- elide(obj, rotate=rot, center=apply(bbox(obj), 1, mean))
+        ranges <- apply(bbox(obj1),1,diff)
+        if (ranges["x"]>ranges["y"]){
+            if(type=="sp"){
+                xy <- cbind(c(bbox(obj1)["x",1],bbox(obj1)["x",2]),c(bbox(obj1)["y",1]+(ranges["y"]/2),bbox(obj1)["y",1]+(ranges["y"]/2)))
+            }
+            rotv[b] <- 90-rot
+        } else {
+            if(type=="sp"){
+                xy <- cbind(c(bbox(obj1)["x",1]+(ranges["x"]/2),bbox(obj1)["x",1]+(ranges["x"]/2)),c(bbox(obj1)["y",1],bbox(obj1)["y",2]))
+            }
+            rotv[b] <- 180-rot
+        }
+        if(type=="sp"){
+            L <- Line(xy)
+            lid <- sapply(slot(obj1, "polygons"), function(k) slot(k, "ID"))
+            newSL <- SpatialLines(list(Lines(list(L),lid)))
+            newSL <- SpatialLinesDataFrame(newSL,data.frame(LineID=lid, row.names=lid))
+            res <- elide(newSL, rotate=-rot, center=apply(bbox(obj), 1, mean))
+            proj4string(res) <- proj4string(obj)
+            res <- gIntersection(res,obj)
+            res <- spChFIDs(res, lid)
+            if (b == 1){
+                allres <- res
+            } else {
+                allres <- spRbind(allres,res)
+            }
+        }
+    }
+    if (length(x)>1 & verbose){ close(pb) }
+    if (type=="azi"){ allres <- rotv }
+    if (verbose){ print("Done.") }
+    return(allres)
+}
