@@ -102,16 +102,41 @@ mapElements <- function(x, y, scalesize, scalelabel, cex.label=0.75, type.north=
 
 }
 
+
+#' Produce pie charts at specified locations on a map
+#'
+#' This function draw a pie chart at specified locations on a map. 
+#'
+#' @param x x coordinate of where the pie will be plotted
+#' @param y y coordinate of where the pie will be plotted
+#' @param values the values that will become the percentages of the pie.
+#' @param sizes the size of each pie.
+#' @param edges the number of increments used to describe the circle of the pie.
+#' @param clockwise whether the divisions are in clockwise order.
+#' @param init.angle where the pie starts te divisions
+#' @param col pie colors (length must be the same as ncol values)
+#' @param border border color(s) of the pies
+#' @param ... passed to default plot function
+#' 
+#' @examples
+#' data(SainteMarie85)
+#' grains$SymSizes <- grains$SiloCount*8 #specify symbol sizes in map units
+#' plotmat <- arrangeSymbols(grains, grains$SymSizes) #alternative pie locations
+#' flines <- flylines(coordinates(grains)[,1],coordinates(grains)[,2],plotmat[,1],plotmat[,2]) #fly-lines from real locations to pie locations.
+#' plot(boghar, col="grey75", border=NA, axes=TRUE, main="Barley (brown) and wheat (yellow)\nin 19th grain silos (Boghar, Algeria)") #background map
+#' lines(flines, lwd=0.5) #fly-lines
+#' pieSymbols(x=plotmat[,1], y=plotmat[,2], values=grains@data[,c("BarleyHL","WheatHL")], sizes=grains$SymSizes, col=c("saddlebrown","yellow")) #pies
+#' points(grains, pch=19, cex=0.3, col="black") #real locations
 #' @export
 #' 
-pieSymbols <- function (x, y, values, sizes=NULL, labels=names(x), edges=360, clockwise=FALSE, init.angle=if(clockwise) 90 else 0, density=NULL, angle=45, col=NULL, border=NULL, lty=NULL, main=NULL, ...){
+pieSymbols <- function (x, y, values, sizes=NULL, edges=360, clockwise=FALSE, init.angle=if(clockwise) 90 else 0, density=NULL, angle=45, col=NULL, border=NULL, lty=NULL, main=NULL, ...){
     ## This is a modification of the basic pie() function to allow overplotting on map data
     t2xy <- function(t){
         t2p <- twopi * t + init.angle * pi/180
         list(x=r * cos(t2p), y=r * sin(t2p))
     }
     for (a in 1:nrow(values)){
-        v <- values[a,]
+        v <- as.matrix(values)[a,]
         if (is.null(sizes)){
             sizes <- rep((max(y)-min(y))/3,length(sizes))
         } else if (length(sizes)==1){
@@ -119,7 +144,7 @@ pieSymbols <- function (x, y, values, sizes=NULL, labels=names(x), edges=360, cl
         } else {
             r <- sizes[a]
         }
-        if (!is.numeric(v) || any(is.na(v) | v < 0)){ 
+        if (!is.numeric(v) | any(is.na(v) | v < 0)){ 
             stop("values must be positive and numeric.")
         }
         v <- c(0, cumsum(v)/sum(v))
