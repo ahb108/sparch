@@ -134,86 +134,102 @@ buffers <- function(x, bands, xIds=NULL, rings=TRUE, bMerge=FALSE, ...){
 
 ##
 
+#' Simple and weighted Voronoi tesselation
+#'
+#' Function to produce a Voronoi tesselation (aka Dirichelet set or Thiessen polygons) from a set of point, without or without weights.
+#'
+#' @param x an object of class SpatialPoints*
+#' @param ids identifiers for each point as lables for the resulting polygons
+#' @param weights optional weight values for the calculation (e.g. measure of relative `influence' or `size' of each point)
+#' @param win an object of class SpatialPolygons* for the exterior of the study area.
+#' @param maxdist A cut-off (the radius of a circle) for the extent of a point's tesselation.
+#' @param nsteps How many increments to use for defining the cruvature of a circle.
+#' @return An object of class SpatialPolygonsDataFrame
+#' @examples
+#' w <- SpatialPolygons(list( Polygons(list(Polygon(cbind(c(0,0,100,100,0), c(0,100,100,0,0)))), "1")), 1:1)
+#' pts <- data.frame(X=runif(3)*100,Y=runif(3)*100,ptID=letters[1:3], Size=c(1,2,4))
+#' coordinates(pts) <- ~X+Y
+#' vor <- voronoi(pts, ids=pts$ptID, win=w)
+#' vorw <- voronoi(pts, ids=pts$ptID, weights=pts$Size, win=w)
+#' plot(vor, lty="dotted", border="red")
+#' plot(vorw, add=TRUE)
+#' points(pts)
+#' @import deldir
 #' @export
-voronoi <- function(x,xID,win=NULL, ...){
-    # wraps deldir for SpatialPolygons
-    if (is.null(win)){ rw1 <- NULL } else { rw1 <- as.vector(t(bbox(win))) }
-    a <- deldir(coordinates(x)[,1], coordinates(x)[,2], rw=rw1, ...)
-    w <- tile.list(a)
-    polys <- vector(mode='list', length=length(w))
-    for (i in seq(along=polys)) {
-        pcrds <- cbind(w[[i]]$x, w[[i]]$y)
-        pcrds <- rbind(pcrds, pcrds[1,])
-        polys[[i]] <- Polygons(list(Polygon(pcrds)), ID=as.character(i))
-    }
-    sp1 <- SpatialPolygons(polys)
-    spdf1 <- SpatialPolygonsDataFrame(sp1, data=data.frame(PtID=xID, row.names=sapply(slot(sp1, 'polygons'), function(x) slot(x, 'ID'))))
-    if (!is.null(win)){
-        proj4string(spdf1) <- CRS(proj4string(win))
-        spdf1 <- spdfClip(spdf1, win)
-    }
-    return(spdf1)
-}
+voronoi <- function(x, ids, weights=NULL, win=NULL, maxdist=NULL, nsteps=36, ...){
 
-##
-
-#' @export
-mwvoronoi <- function(pts, ptID, ptWeights=rep(1,nrow(pts)), win=NULL, maxdist=NULL, nsteps=36, ...){
-
-    # Multiplicatively weighted Voronoi tesselation
-    for (a in 1:nrow(pts)){
-        da <- NULL
-        for (b in 1:nrow(pts)){
-            if (a != b){
-                if (ptWeights[a] <= ptWeights[b]){
-                    p1 <- coordinates(pts)[a,]
-                    p2 <- coordinates(pts)[b,]
-                    w1 <- ptWeights[a]
-                    w2 <- ptWeights[b]
-                } else {
-                    p1 <- coordinates(pts)[b,]
-                    p2 <- coordinates(pts)[a,]
-                    w1 <- ptWeights[b]
-                    w2 <- ptWeights[a]
-                }
-                d12 <- sqrt(sum((p1 - p2) ^ 2)) #euclidean distance
-                c1 <- (w2^2*p1-w1^2*p2) / (w2^2-w1^2)
-                r1 <- (w1*w2*d12) / (w1^2-w2^2)
-                if (ptWeights[a] == ptWeights[b]){
-                    tmpts <- rbind(pts[a,],pts[b,])
-                    ac <- voronoi(tmpts,c(w1,w2),win=win,nsteps=nsteps)
-                    ac <- as(ac[1,],"SpatialPolygons")
-                } else {
-                    ac <- spEllipse(c1[1],c1[2],r1, nsteps=nsteps)
-                }
-                if (ptWeights[a] > ptWeights[b]){
-                    ac <- gDifference(win,ac)
-                }
-                if (is.null(da)){
-                    da <- gIntersection(ac,win)
-                } else {
-                    da <- gIntersection(ac,da)
+    if (is.null(weights)){
+        if (is.null(win)){ rw1 <- NULL } else { rw1 <- as.vector(t(bbox(win))) }
+        a <- deldir(coordinates(x)[,1], coordinates(x)[,2], rw=rw1, ...)
+        w <- tile.list(a)
+        polys <- vector(mode='list', length=length(w))
+        for (i in seq(along=polys)) {
+            pcrds <- cbind(w[[i]]$x, w[[i]]$y)
+            pcrds <- rbind(pcrds, pcrds[1,])
+            polys[[i]] <- Polygons(list(Polygon(pcrds)), ID=as.character(i))
+        }
+        sp1 <- SpatialPolygons(polys)
+        spdf1 <- SpatialPolygonsDataFrame(sp1, data=data.frame(PtID=ids, row.names=sapply(slot(sp1, 'polygons'), function(x) slot(x, 'ID'))))
+        if (!is.null(win)){
+            proj4string(spdf1) <- CRS(proj4string(win))
+            res <- spdfClip(spdf1, win)
+        }
+        return(res)
+    } else {
+        for (a in 1:nrow(x)){
+            da <- NULL
+            for (b in 1:nrow(x)){
+                if (a != b){
+                    if (weights[a] <= weights[b]){
+                        p1 <- coordinates(x)[a,]
+                        p2 <- coordinates(x)[b,]
+                        w1 <- weights[a]
+                        w2 <- weights[b]
+                    } else {
+                        p1 <- coordinates(x)[b,]
+                        p2 <- coordinates(x)[a,]
+                        w1 <- weights[b]
+                        w2 <- weights[a]
+                    }
+                    d12 <- sqrt(sum((p1 - p2) ^ 2)) #euclidean distance
+                    c1 <- (w2^2*p1-w1^2*p2) / (w2^2-w1^2)
+                    r1 <- (w1*w2*d12) / (w1^2-w2^2)
+                    if (weights[a] == weights[b]){
+                        tmpts <- rbind(x[a,],x[b,])
+                        ac <- voronoi(tmpts,c(w1,w2),win=win,nsteps=nsteps)
+                        ac <- as(ac[1,],"SpatialPolygons")
+                    } else {
+                        ac <- spEllipse(c1[1],c1[2],r1, nsteps=nsteps)
+                    }
+                    if (weights[a] > weights[b]){
+                        ac <- gDifference(win,ac)
+                    }
+                    if (is.null(da)){
+                        da <- gIntersection(ac,win)
+                    } else {
+                        da <- gIntersection(ac,da)
+                    }
                 }
             }
-        }
-        if (!is.null(maxdist)){
-            if (!is.numeric(maxdist) | maxdist <= 0){
-                stop("Maximum distance must be a postive number.")
+            if (!is.null(maxdist)){
+                if (!is.numeric(maxdist) | maxdist <= 0){
+                    stop("Maximum distance must be a postive number.")
+                } else {
+                    b <- gBuffer(x[a,], width=maxdist, quadsegs=round(nsteps/4,0))
+                    da <- gIntersection(da,b)
+                }
+            }
+            da <- spChFIDs(da, paste(ids[a],sep=""))
+            da <- SpatialPolygonsDataFrame(da, data=data.frame(id=ids[a], weight=weights[a], row.names=paste(ids[a],sep="")))
+            if (a==1){
+                res <- da
             } else {
-                b <- gBuffer(pts[a,], width=maxdist, quadsegs=round(nsteps/4,0))
-                da <- gIntersection(da,b)
+                res <- spRbind(res,da)
             }
         }
-        da <- spChFIDs(da, paste(pts$ptID[a],sep=""))
-        da <- SpatialPolygonsDataFrame(da, data=data.frame(ptID=pts$ptID[a], weight=ptWeights[a], row.names=paste(pts$ptID[a],sep=""))) # convert to SpatialPolygonsDataFrame
-        if (a==1){
-            res <- da
-        } else {
-            res <- spRbind(res,da)
-        }
+        proj4string(res) <- CRS(proj4string(pts))
+        return(res)
     }
-    proj4string(res) <- CRS(proj4string(pts))
-    return(res)
 }
 
 ##
