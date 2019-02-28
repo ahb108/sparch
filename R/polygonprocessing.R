@@ -196,10 +196,10 @@ voronoi <- function(x, ids, weights=NULL, win=NULL, maxdist=NULL, nsteps=36, ...
                     r1 <- (w1*w2*d12) / (w1^2-w2^2)
                     if (weights[a] == weights[b]){
                         tmpts <- rbind(x[a,],x[b,])
-                        ac <- voronoi(tmpts,c(w1,w2),win=win,nsteps=nsteps)
+                        ac <- voronoi(tmpts, c(w1,w2), win=win, nsteps=nsteps)
                         ac <- as(ac[1,],"SpatialPolygons")
                     } else {
-                        ac <- spEllipse(c1[1],c1[2],r1, nsteps=nsteps)
+                        ac <- spEllipse(c1[1],c1[2],r1, nsteps=nsteps, proj4string=CRS(proj4string(win)))
                     }
                     if (weights[a] > weights[b]){
                         ac <- gDifference(win,ac)
@@ -227,7 +227,7 @@ voronoi <- function(x, ids, weights=NULL, win=NULL, maxdist=NULL, nsteps=36, ...
                 res <- spRbind(res,da)
             }
         }
-        proj4string(res) <- CRS(proj4string(pts))
+        proj4string(res) <- CRS(proj4string(x))
         return(res)
     }
 }
