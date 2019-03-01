@@ -174,10 +174,10 @@ voronoi <- function(x, ids, weights=NULL, win=NULL, maxdist=NULL, nsteps=36, ver
         if (verbose){
         print("Allocating areas per point...")
         flush.console()
-        pb <- txtProgressBar(min=1, max=length(startdate), style=3)
+        pb <- txtProgressBar(min=1, max=nrow(x), style=3)
     }
         for (a in 1:nrow(x)){
-            if (length(startdate)>1 & verbose){ setTxtProgressBar(pb, a) }
+            if (verbose){ setTxtProgressBar(pb, a) }
             da <- NULL
             for (b in 1:nrow(x)){
                 if (a != b){
