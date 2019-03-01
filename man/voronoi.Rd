@@ -2,10 +2,10 @@
 % Please edit documentation in R/polygonprocessing.R
 \name{voronoi}
 \alias{voronoi}
-\title{Simple and weighted Voronoi tesselation}
+\title{Simple and weighted Voronoi tesselations}
 \usage{
 voronoi(x, ids, weights = NULL, win = NULL, maxdist = NULL,
-  nsteps = 36, ...)
+  nsteps = 36, verbose = TRUE, ...)
 }
 \arguments{
 \item{x}{an object of class SpatialPoints*}
@@ -19,6 +19,8 @@ voronoi(x, ids, weights = NULL, win = NULL, maxdist = NULL,
 \item{maxdist}{A cut-off (the radius of a circle) for the extent of a point's tesselation.}
 
 \item{nsteps}{How many increments to use for defining the cruvature of a circle.}
+
+\item{verbose}{A logical variable indicating whether extra information on progress should be reported. Default is TRUE.}
 }
 \value{
 An object of class SpatialPolygonsDataFrame

@@ -1,7 +1,7 @@
 
 #' @export
 removeIslands <- function(x){
-  # Remove holes form polygon (based on function in wild1 library)
+  # Remove holes from polygon (based on function in wild1 library)
   require(sp)
   isles <-  unlist(lapply(x@Polygons, function(p) p@hole))
   p <- Polygons(x@Polygons[!isles], ID=x@ID)
@@ -13,12 +13,9 @@ removeIslands <- function(x){
 #' @export
 spdfClip <- function(toclip, clipby){
 
-  #Class checks
   if(!class(toclip)[1] %in% c("SpatialLines","SpatialPolygons","SpatialLinesDataFrame","SpatialPolygonsDataFrame")){stop("'toclip' is not a SpatialLines* or SpatialPolygons* objects.")}
   if(!inherits(clipby, "SpatialPolygons")){stop("'clipby' is not a SpatialPolygons* object.")}
-  #Projection compatibility
   if (!identical(proj4string(toclip),proj4string(clipby))){stop("'toclip' and 'clipby' are not the same CRS.")}
-  #Set up up dataframe to fill if necessary
   if (class(toclip)[1]=="SpatialLinesDataFrame"){
     tc <- as(toclip,"SpatialLines")
     df <- toclip@data[1, ,drop=FALSE]
@@ -26,14 +23,12 @@ spdfClip <- function(toclip, clipby){
     df <- cbind(df,data.frame(RN=numeric(0)))
   } else if (class(toclip)[1]=="SpatialPolygonsDataFrame"){
     tc <- as(toclip,"SpatialPolygons")
-    #df <- toclip@data[1,]
     df <- toclip@data[1, ,drop=FALSE]
     df <- df[-1, ,drop=FALSE]
     df <- cbind(df,data.frame(RN=numeric(0)))
   } else {
     tc <- toclip
   }
-  #Loop through and clip (preserving dataframe links if necessary)
   clippedlist <- vector("list", length(tc))
   dflist <- vector("list", length(tc))
   for (i in 1:length(tc)){
@@ -57,7 +52,6 @@ spdfClip <- function(toclip, clipby){
   clippedall <- do.call("rbind", clippedlist)
   dflist <- dflist[!sapply(dflist, is.null)]
   df <- do.call("rbind", dflist) 
-  #Recombine the results with the dataframe if necessary
   if (!is.null(clippedall)){
     if (class(toclip)[1]=="SpatialLinesDataFrame"){
       rownames(df) <- df$RN
@@ -90,7 +84,7 @@ gExplode <- function(x) {
 ##
 
 #' @export
-buffers <- function(x, bands, xIds=NULL, rings=TRUE, bMerge=FALSE, ...){
+buffer <- function(x, bands, xIds=NULL, rings=TRUE, bMerge=FALSE, ...){
     for(i in 1:length(bands)){
         if (bMerge){
             pids <- paste("",bands[i], sep="_")
@@ -134,7 +128,7 @@ buffers <- function(x, bands, xIds=NULL, rings=TRUE, bMerge=FALSE, ...){
 
 ##
 
-#' Simple and weighted Voronoi tesselation
+#' Simple and weighted Voronoi tesselations
 #'
 #' Function to produce a Voronoi tesselation (aka Dirichelet set or Thiessen polygons) from a set of point, without or without weights.
 #'
@@ -144,6 +138,7 @@ buffers <- function(x, bands, xIds=NULL, rings=TRUE, bMerge=FALSE, ...){
 #' @param win an object of class SpatialPolygons* for the exterior of the study area.
 #' @param maxdist A cut-off (the radius of a circle) for the extent of a point's tesselation.
 #' @param nsteps How many increments to use for defining the cruvature of a circle.
+#' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #' @return An object of class SpatialPolygonsDataFrame
 #' @examples
 #' w <- SpatialPolygons(list( Polygons(list(Polygon(cbind(c(0,0,100,100,0), c(0,100,100,0,0)))), "1")), 1:1)
@@ -156,7 +151,7 @@ buffers <- function(x, bands, xIds=NULL, rings=TRUE, bMerge=FALSE, ...){
 #' points(pts)
 #' @import deldir
 #' @export
-voronoi <- function(x, ids, weights=NULL, win=NULL, maxdist=NULL, nsteps=36, ...){
+voronoi <- function(x, ids, weights=NULL, win=NULL, maxdist=NULL, nsteps=36, verbose=TRUE, ...){
 
     if (is.null(weights)){
         if (is.null(win)){ rw1 <- NULL } else { rw1 <- as.vector(t(bbox(win))) }
@@ -176,7 +171,13 @@ voronoi <- function(x, ids, weights=NULL, win=NULL, maxdist=NULL, nsteps=36, ...
         }
         return(res)
     } else {
+        if (verbose){
+        print("Allocating areas per point...")
+        flush.console()
+        pb <- txtProgressBar(min=1, max=length(startdate), style=3)
+    }
         for (a in 1:nrow(x)){
+            if (length(startdate)>1 & verbose){ setTxtProgressBar(pb, a) }
             da <- NULL
             for (b in 1:nrow(x)){
                 if (a != b){
@@ -191,7 +192,7 @@ voronoi <- function(x, ids, weights=NULL, win=NULL, maxdist=NULL, nsteps=36, ...
                         w1 <- weights[b]
                         w2 <- weights[a]
                     }
-                    d12 <- sqrt(sum((p1 - p2) ^ 2)) #euclidean distance
+                    d12 <- sqrt(sum((p1 - p2) ^ 2)) #Euclidean distance
                     c1 <- (w2^2*p1-w1^2*p2) / (w2^2-w1^2)
                     r1 <- (w1*w2*d12) / (w1^2-w2^2)
                     if (weights[a] == weights[b]){
@@ -228,6 +229,10 @@ voronoi <- function(x, ids, weights=NULL, win=NULL, maxdist=NULL, nsteps=36, ...
             }
         }
         proj4string(res) <- CRS(proj4string(x))
+        if (verbose){
+            close(pb)
+            print("Done.")
+        }
         return(res)
     }
 }

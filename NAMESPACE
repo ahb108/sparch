@@ -2,7 +2,7 @@
 
 export(ah2sp)
 export(arrangeSymbols)
-export(buffers)
+export(buffer)
 export(colRibbon)
 export(flylines)
 export(gExplode)
