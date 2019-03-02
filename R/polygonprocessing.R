@@ -147,8 +147,10 @@ buffer <- function(x, bands, xIds=NULL, rings=TRUE, bMerge=FALSE, ...){
 #' vor <- voronoi(pts, ids=pts$ptID, win=w)
 #' vorw <- voronoi(pts, ids=pts$ptID, weights=pts$Size, win=w)
 #' plot(vor, lty="dotted", border="red")
-#' plot(vorw, add=TRUE)
+#' plot(vorw, border="blue", add=TRUE)
 #' points(pts)
+#' text(coordinates(pts)[,1],coordinates(pts)[,2], pts$Size, col="blue", adj=c(1,-1))
+#' legend("center", lty=c("dotted","solid"),col=c("red","blue"),legend=c("unweighted","weighted"), bty="n")
 #' @import deldir
 #' @export
 voronoi <- function(x, ids, weights=NULL, win=NULL, maxdist=NULL, nsteps=36, verbose=TRUE, ...){
