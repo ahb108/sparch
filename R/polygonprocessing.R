@@ -130,7 +130,7 @@ buffer <- function(x, bands, xIds=NULL, rings=TRUE, bMerge=FALSE, ...){
 
 #' Simple and weighted Voronoi tesselations
 #'
-#' Function to produce a Voronoi tesselation (aka Dirichelet set or Thiessen polygons) from a set of point, without or without weights.
+#' Function to produce a Voronoi tesselation (aka Dirichelet set or Thiessen polygons) from a set of point, with or without weights.
 #'
 #' @param x an object of class SpatialPoints*
 #' @param ids identifiers for each point as lables for the resulting polygons

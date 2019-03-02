@@ -26,7 +26,7 @@ voronoi(x, ids, weights = NULL, win = NULL, maxdist = NULL,
 An object of class SpatialPolygonsDataFrame
 }
 \description{
-Function to produce a Voronoi tesselation (aka Dirichelet set or Thiessen polygons) from a set of point, without or without weights.
+Function to produce a Voronoi tesselation (aka Dirichelet set or Thiessen polygons) from a set of point, with or without weights.
 }
 \examples{
 w <- SpatialPolygons(list( Polygons(list(Polygon(cbind(c(0,0,100,100,0), c(0,100,100,0,0)))), "1")), 1:1)
