@@ -304,3 +304,26 @@ polyAngle <- function(x, degsteps=1, type="azi", verbose=TRUE){
     if (verbose){ print("Done.") }
     return(allres)
 }
+
+#' Produce a basic square or rectangular mapping polygon
+#'
+#' Function to produce a basic square or rectangular box (e.g. for polygon clipping or plot borders)
+#'
+#' @param ll coordinates of the lower left corner
+#' @param ur coordinates of the upper right corner
+#' @param lr coordinates of the lower right corner (by default set automatically)
+#' @param ul coordinates of the upper left corner (by default set automatically)
+#' @param proj4string projection string of class CRS.
+#' @return An object of class SpatialPolygonsDataFrame
+#' @examples
+#' utm34n <- CRS("+init=epsg:32634") # Greek UTM (west)
+#' b <- basicbox(c(681900,4010900), c(682500,4011400), prj4string=utm34n)
+#' plot(b, axes=TRUE)
+#' @export
+basicbox <- function(ll, ur, ul=c(ll[1],ur[2]), lr=c(ur[1],ll[2]), proj4string=NA){
+    res <- Polygon(cbind(c(ll[1],ul[1],ur[1],lr[1],ll[1]), c(ll[2],ul[2],ur[2],lr[2],ll[2])))
+    res <- Polygons(list(res), "1")
+    res <- SpatialPolygons(list(res), 1:1, proj4string=proj4string)
+    res <- SpatialPolygonsDataFrame(res,data.frame(SpID=1))
+    return(res)
+}

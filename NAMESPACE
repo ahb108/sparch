@@ -2,6 +2,7 @@
 
 export(ah2sp)
 export(arrangeSymbols)
+export(basicbox)
 export(buffer)
 export(colRibbon)
 export(flylines)

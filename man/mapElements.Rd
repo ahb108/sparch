@@ -5,11 +5,11 @@
 \title{Addition of both a north arrow and scalebar to map}
 \usage{
 mapElements(x, y, scalesize, scalelabel, cex.label = 0.75,
-  type.north = "simple", lwd.north = 0.5, offset.north = height.scale
-  * 1.5, r.north = scalesize/5, bkgrd.north = "white",
-  fill.north = "black", offset.scale = height.scale,
-  height.scale = scalesize/8, border.scale = "black",
-  col.scale = "white", lwd.scale = 0.5)
+  font.label = 1, col.label = "black", type.north = "simple",
+  lwd.north = 0.5, offset.north = height.scale * 1.5,
+  r.north = scalesize/5, bkgrd.north = "white", fill.north = "black",
+  offset.scale = height.scale, height.scale = scalesize/8,
+  border.scale = "black", col.scale = "white", lwd.scale = 0.5)
 }
 \arguments{
 \item{x}{x coordinate for the centre of the added elements (the centre of the text label)}

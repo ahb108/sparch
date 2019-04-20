@@ -94,12 +94,11 @@ gradSymbols <- function(x, mincex, maxcex, valrange=NULL, sqrttrans=FALSE,...){
 #' @return a plotted north arrow and scale-bar
 #' @export
 #' 
-mapElements <- function(x, y, scalesize, scalelabel, cex.label=0.75, type.north="simple", lwd.north=0.5, offset.north=height.scale*1.5, r.north=scalesize/5, bkgrd.north="white", fill.north="black", offset.scale=height.scale, height.scale=scalesize/8, border.scale="black", col.scale="white", lwd.scale=0.5){
+mapElements <- function(x, y, scalesize, scalelabel, cex.label=0.75, font.label=1, col.label="black", type.north="simple", lwd.north=0.5, offset.north=height.scale*1.5, r.north=scalesize/5, bkgrd.north="white", fill.north="black", offset.scale=height.scale, height.scale=scalesize/8, border.scale="black", col.scale="white", lwd.scale=0.5){
     
     northArrow(x, y+(r.north+offset.north), r=r.north, type=type.north, lwd=lwd.north, fill=fill.north, bkgrd=bkgrd.north)
     scaleBar(x-(scalesize/2), y-(offset.scale), width=scalesize, height=height.scale, lwd=lwd.scale, col=col.scale, border=border.scale)
-    text(x, y, labels=scalelabel, cex=cex.label)
-
+    text(x, y, labels=scalelabel, cex=cex.label, font=font.label, col=col.label)
 }
 
 
