@@ -78,3 +78,40 @@ rybcolours <- function(range, sealevel=0, ncolours=100, nbeach=0){
     if(nland > 0)  colours <- c(colours, yr(nland)) # darkred/yellow
     return(colours)
 }
+
+#' @export
+greyscales <- function(x, n, start=0, end=1, gamma=1, alpha=1, setrange=NULL){
+    tmpcols <- gray.colors(n=n, start=start, end=end, gamma=gamma, alpha=alpha)
+    if (!is.null(setrange)){
+        ticks <- c(setrange[2],0,setrange[1])
+        if (length(setrange)!=2 | any(!is.numeric(setrange))){
+            stop("setrange must be a numeric vector of length 2.")
+        } else {
+            if (setrange[2] <= setrange[1]){
+                stop("setrange must be a numeric vector of length 2 in ascending order.")
+            }
+            if (minValue(x) < setrange[1] & maxValue(x) > setrange[2]){
+                tmpn <- n-2
+                mybrks <- c(minValue(x), seq(setrange[1],setrange[2],(setrange[2]-setrange[1])/tmpn), maxValue(x))
+                mycolrs <- c(tmpcols[1], gray.colors(tmpn, start=start, end=end, gamma=gamma, alpha=alpha), tmpcols[length(tmpcols)])
+            } else if (minValue(x) < setrange[1]){
+                tmpn <- n-1
+                mybrks <- c(minValue(x), seq(setrange[1],setrange[2],(setrange[2]-setrange[1])/tmpn))
+                mycolrs <- c(tmpcols[1], gray.colors(tmpn, start=start, end=end, gamma=gamma, alpha=alpha))
+            } else if (maxValue(x) > setrange[2]){
+                tmpn <- n-1
+                mybrks <- c(seq(setrange[1],setrange[2],(setrange[2]-setrange[1])/tmpn), maxValue(x))
+                mycolrs <- c(gray.colors(tmpn, start=start, end=end, gamma=gamma, alpha=alpha), tmpcols[length(tmpcols)])
+            } else {
+                tmpn <- n
+                mybrks <- seq(setrange[1],setrange[2],(setrange[2]-setrange[1])/tmpn)
+                mycolrs <- gray.colors(n, start=start, end=end, gamma=gamma, alpha=alpha)
+            }
+        }
+    } else {
+        ticks <- c(maxValue(x),0,minValue(x))
+        mybrks <- seq(minValue(x),maxValue(x),(maxValue(x)-minValue(x))/n)
+        mycolrs <- gray.colors(n, start=start, end=end, gamma=gamma, alpha=alpha)
+    }
+    return(list(breaks=mybrks, cols=mycolrs, ticks=ticks))
+}
