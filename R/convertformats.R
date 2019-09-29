@@ -100,6 +100,32 @@ ngrResolution <- function(x, figures){
     return(newngr)
 }
 
+#' @title Remove trailing zeroes in National Grid Reference
+#' @description Remove trailing zeroes in National Grid Reference when present in both x and y   
+#' @param x A string containing a valid National Grid Reference
+#' @return A string containing a valid National Grid Reference
+#' @examples
+#' ngrZeroStrip("ST46409000")
+#' ngrZeroStrip("ST46409001")
+#' @export
+ngrZeroStrip <- function(x){
+    prefix <- substr(x,1,2)
+    suffix <- substr(x,3,nchar(x))
+    if (nchar(suffix) %% 2 == 0){
+        xcomp <- substr(suffix,1,nchar(suffix)/2)
+        ycomp <- substr(suffix,(nchar(suffix)/2)+1,nchar(suffix))
+        xtolose <- nchar(xcomp) - nchar(sub("0+$", "", xcomp))
+        ytolose <- nchar(ycomp) - nchar(sub("0+$", "", ycomp))
+        tolose <- min(xtolose, ytolose)
+        newxcomp <- substr(xcomp,1,nchar(xcomp)-tolose)
+        newycomp <- substr(ycomp,1,nchar(ycomp)-tolose)
+        newngr <- paste(prefix, newxcomp, newycomp, sep="")      
+    } else {
+        stop("Grid reference has an incorrect (odd) number of figures.")
+    }
+    return(newngr)
+}
+
 #' @title Convert a coordinate pair to a different coordinate system 
 #' @description Converts a single coordinate pair to a different coordinate system  
 #' @param coords A vector of length 2 with the coordinates
