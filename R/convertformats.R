@@ -141,7 +141,7 @@ xyTransform <- function(coords, proj1, proj2){
     if (as.character(class(proj1))!="CRS" | as.character(class(proj2))!="CRS"){
         stop("One or both of proj1 and proj2 are not correct CRS class definitions.")
     }
-    tmp <- SpatialPoints(t(as.matrix(coords)), proj4string=proj1)
+    tmp <- SpatialPoints(t(as.matrix(as.numeric(coords))), proj4string=proj1)
     tmp <- spTransform(tmp,proj2)
     coordinates(tmp)
     res <- as.numeric(coordinates(tmp))
