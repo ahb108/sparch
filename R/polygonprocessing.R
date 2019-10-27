@@ -1,3 +1,30 @@
+#' Adjust a polygonal study area to incorporate points near edges
+#'
+#' Function to buffer an existing polygonal study area to create a revised study area that includes all known points. 
+#'
+#' @param x input study area of class SpatialPolygons*
+#' @param pts observations of class SpatialPoints*
+#' @param width width to buffer the points
+#' @return An object of class SpatialPolygonsDataFrame
+#' @examples
+#' utm34n <- CRS("+init=epsg:32634") # Greek UTM (west)
+#' ## Create some points within and beyond polygon b2
+#' b1 <- basicbox(c(681900,4010900), c(682500,4011400), proj4string=utm34n)
+#' b2 <- basicbox(c(681920,4010920), c(682480,4011380), proj4string=utm34n)
+#' set.seed(123)
+#' pts <- spsample(b1,100, type="random")
+#' ## New polygon to include all points
+#' b2b <- gEdgePoints(b2,pts,25)
+#' plot(b2b, border="red")
+#' points(pts, pch=19, cex=0.3, col="blue")
+#' plot(b2, add=TRUE, border="black", lty="dotted")
+#' @export
+gEdgePoints <- function(x, pts, width){
+    tmp <- gBuffer(pts, width=width)
+    xb <- gUnion(x, tmp)
+    xb <- SpatialPolygonsDataFrame(xb, data.frame(SpID=sapply(slot(xb, "polygons"), function(x) slot(x, "ID"))))
+    return(xb)
+}
 
 #' @export
 removeIslands <- function(x){
@@ -317,7 +344,7 @@ polyAngle <- function(x, degsteps=1, type="azi", verbose=TRUE){
 #' @return An object of class SpatialPolygonsDataFrame
 #' @examples
 #' utm34n <- CRS("+init=epsg:32634") # Greek UTM (west)
-#' b <- basicbox(c(681900,4010900), c(682500,4011400), prj4string=utm34n)
+#' b <- basicbox(c(681900,4010900), c(682500,4011400), proj4string=utm34n)
 #' plot(b, axes=TRUE)
 #' @export
 basicbox <- function(ll, ur, ul=c(ll[1],ur[2]), lr=c(ur[1],ll[2]), proj4string=NA){
