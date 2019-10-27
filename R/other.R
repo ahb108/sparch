@@ -1,3 +1,35 @@
+#' @title Handle the positioning and labelling of a (spatstat) colour ramp more easily 
+#' @description Handle the positioning and labelling of a (spatstat) colour ramp more easily.  
+#' @param x x-axis location of the colourramp lower-left corner
+#' @param x y-axis location of the colourramp lower-left corner.
+#' @param xprop proportion of plot width to be allocated to the colour ramp width
+#' @param yprop proportion of plot height to be allocated to the colour ramp height
+#' @param zlim minimum and maximum values for the colour ramp
+#' @param cm object of class 'colourmap' to plot (or default spatstat colour ramp if left null)
+#' @param steps how many numerical steps to label in the ramp legend
+#' @param sigdigits how to round the digits in the labels
+#' @param cex.axis size of the labels
+#' @param las orientation of the labels
+#' @param vertical whether the ramp is places as a vertical or horizontal ribbon
+#' @return a image ribbon added to an existing plot.
+#' @examples
+#' exampledensitymap <- density(cells, 0.05)
+#' plot(exampledensitymap, ribbon=FALSE)
+#' ribbonplot(x=0.1, y=0.1, xprop=0.03, yprop=0.2, zlim=c(min(exampledensitymap),max(exampledensitymap)), cex.axis=0.6, col.axis="white", col.ticks="white", las=2)
+#' @import stats
+#' @export
+ribbonplot <- function(x, y, xprop, yprop, zlim, cm=NULL, steps=4, rounding=3, vertical=TRUE,...){
+    plotlim <- par("usr")
+    if (is.null(cm)){
+        cm <- colourmap(Kovesi$values[[29]],range=c(zlim[1],zlim[2]))
+    }
+    xlimramp <- c(x, x+((plotlim[2]-plotlim[1])*xprop))
+    ylimramp <- c(y, y+((plotlim[4]-plotlim[3])*yprop))
+    xticks <- seq(zlim[1], zlim[2], zlim[2]/steps)
+    xticks.text <- round(xticks, rounding)
+    plot(cm, vertical=vertical, main="", ylim=ylimramp, xlim=xlimramp, add=TRUE, at=reScale(xticks,to=c(ylimramp[1],ylimramp[2])), labels=xticks.text, ...)
+}
+
 #' @title Rescale a numeric vector to a specified minimum and maximum 
 #' @description Rescale a numeric vector to a specified minimum and maximum.  
 #' @param x numeric vector to smooth.
@@ -9,7 +41,6 @@
 #' reScale(15:200)
 #' @import stats
 #' @export
-
 reScale <- function(x, type="simple", to=c(0,1), na.rm=TRUE){
 
     types <- c("simple","normal")
