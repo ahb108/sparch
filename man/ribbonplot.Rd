@@ -5,7 +5,7 @@
 \title{Handle the positioning and labelling of a (spatstat) colour ramp more easily}
 \usage{
 ribbonplot(x, y, xprop, yprop, zlim, cm = NULL, steps = 4,
-  rounding = 3, vertical = TRUE, ...)
+  sigdigits = NULL, rounding = NULL, vertical = TRUE, ...)
 }
 \arguments{
 \item{x}{x-axis location of the colourramp lower-left corner}
@@ -20,18 +20,16 @@ ribbonplot(x, y, xprop, yprop, zlim, cm = NULL, steps = 4,
 
 \item{steps}{how many numerical steps to label in the ramp legend}
 
+\item{sigdigits}{how to round the digits in the labels}
+
+\item{rounding}{to how many decimal places should the labels be rounded}
+
 \item{vertical}{whether the ramp is places as a vertical or horizontal ribbon}
 
 \item{x}{y-axis location of the colourramp lower-left corner.}
-
-\item{sigdigits}{how to round the digits in the labels}
-
-\item{cex.axis}{size of the labels}
-
-\item{las}{orientation of the labels}
 }
 \value{
-a image ribbon added to an existing plot.
+an image ribbon added to an existing plot.
 }
 \description{
 Handle the positioning and labelling of a (spatstat) colour ramp more easily.
