@@ -1,3 +1,36 @@
+#' @title Rescale a numeric vector to a specified minimum and maximum 
+#' @description Rescale a numeric vector to a specified minimum and maximum.  
+#' @param x numeric vector to smooth.
+#' @param type what kind of rescaling to perform. Current options are 'simple' (default) and 'normal' which produces a z-score and 'custom' for which the 'to' argument must be specified.
+#' @param to numeric vector of length 2 specifying the minimum and maximum value to perform a linear rescale between (default is 0 and 1)
+#' @param na.rm Set to TRUE,this removes NAs before rescaling.
+#' @return A numeric vector of rescaled values.
+#' @examples
+#' reScale(15:200)
+#' @import stats
+#' @export
+
+reScale <- function(x, type="simple", to=c(0,1), na.rm=TRUE){
+
+    types <- c("simple","normal")
+    if (!type %in% types){
+        stop("The rescale type you have chosen is not currently an option.")
+    }
+    if (max(x)-min(x)==0){
+        warning("All the values in x are the same, and will just be recentred on 0 if type='normal' or max(to) if type='simple'.")
+        if (type=="normal"){ res <- rep(0,length(x)) } else { res <- rep(max(to), length(x)) }
+        return(res)
+    }
+    if (na.rm){ x <- na.omit(x) }
+    if (type=="normal"){
+        res <- (x-mean(x))/sd(x)
+    } else {
+        xrange <- range(x)
+        mfac <- (to[2] - to[1])/(xrange[2] - xrange[1])
+        res <- to[1] + (x - xrange[1]) * mfac
+    }
+    return(res)
+}
 
 #' @export
 isWholeNumber <- function(x, tol = .Machine$double.eps^0.5) {
