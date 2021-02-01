@@ -1,9 +1,11 @@
 #' Produce a very simple map scale-bar
 #'
-#' This function draw a simple scale-bar in the form of a box with a certain width and height (in map units) and hung on its top right corner.
+#' This function draw a simple scale-bar in the form of a box with a certain width and height (in map units) and hung on its top right corner. Further parameters such as colour and border can be modified in the normal way.
 #'
 #' @param x Top left x coordinate
 #' @param y Top left y coordinate
+#' @param width The width of the bar (i.e. the scale, in the units of the plot)
+#' @param height The height of the bar (in the units of the plot)
 #' @return a plotted polygon
 #' @export
 scaleBar <- function(x, y, width, height,...){

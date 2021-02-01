@@ -4,8 +4,7 @@
 \alias{ah2sp}
 \title{Convert an alphahull to a SpatialPolygonsDataFrame}
 \usage{
-ah2sp(x, increment = 360, rnd = 10,
-  proj4string = CRS(as.character(NA)))
+ah2sp(x, increment = 360, rnd = 10, proj4string = CRS(as.character(NA)))
 }
 \arguments{
 \item{x}{An object of class ahull from the alphahull package}

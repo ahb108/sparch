@@ -4,8 +4,17 @@
 \alias{spEllipse}
 \title{Produce an circle or ellipse as a SpatialPolygons object}
 \usage{
-spEllipse(xc, yc, a, b = a, angle = 0, nsteps = 360,
-  proj4string = CRS(as.character(NA)), noSp = FALSE, ...)
+spEllipse(
+  xc,
+  yc,
+  a,
+  b = a,
+  angle = 0,
+  nsteps = 360,
+  proj4string = CRS(as.character(NA)),
+  noSp = FALSE,
+  ...
+)
 }
 \arguments{
 \item{xc}{x coordinate of circle or ellipse centre}

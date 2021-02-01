@@ -4,10 +4,22 @@
 \alias{pieSymbols}
 \title{Produce pie charts at specified locations on a map}
 \usage{
-pieSymbols(x, y, values, sizes = NULL, edges = 360,
-  clockwise = FALSE, init.angle = if (clockwise) 90 else 0,
-  density = NULL, angle = 45, col = NULL, border = NULL,
-  lty = NULL, main = NULL, ...)
+pieSymbols(
+  x,
+  y,
+  values,
+  sizes = NULL,
+  edges = 360,
+  clockwise = FALSE,
+  init.angle = if (clockwise) 90 else 0,
+  density = NULL,
+  angle = 45,
+  col = NULL,
+  border = NULL,
+  lty = NULL,
+  main = NULL,
+  ...
+)
 }
 \arguments{
 \item{x}{x coordinate of where the pie will be plotted}
@@ -38,7 +50,7 @@ data(SainteMarie85)
 grains$SymSizes <- grains$SiloCount*8 #specify symbol sizes in map units
 plotmat <- arrangeSymbols(grains, grains$SymSizes) #alternative pie locations
 flines <- flylines(coordinates(grains)[,1],coordinates(grains)[,2],plotmat[,1],plotmat[,2]) #fly-lines from real locations to pie locations.
-plot(boghar, col="grey75", border=NA, axes=TRUE, main="Barley (brown) and wheat (yellow)\\nin 19th grain silos (Boghar, Algeria)") #background map
+plot(boghar, col="grey75", border=NA, axes=TRUE, main="Barley (brown) and wheat (yellow)\nin 19th grain silos (Boghar, Algeria)") #background map
 lines(flines, lwd=0.5) #fly-lines
 pieSymbols(x=plotmat[,1], y=plotmat[,2], values=grains@data[,c("BarleyHL","WheatHL")], sizes=grains$SymSizes, col=c("saddlebrown","yellow")) #pies
 points(grains, pch=19, cex=0.3, col="black") #real locations

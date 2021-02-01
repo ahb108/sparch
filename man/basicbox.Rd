@@ -4,8 +4,7 @@
 \alias{basicbox}
 \title{Produce a basic square or rectangular mapping polygon}
 \usage{
-basicbox(ll, ur, ul = c(ll[1], ur[2]), lr = c(ur[1], ll[2]),
-  proj4string = NA)
+basicbox(ll, ur, ul = c(ll[1], ur[2]), lr = c(ur[1], ll[2]), proj4string = NA)
 }
 \arguments{
 \item{ll}{coordinates of the lower left corner}

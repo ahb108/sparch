@@ -4,11 +4,22 @@
 \alias{ribbonplot}
 \title{Handle the positioning and labelling of a (spatstat) colour ramp more easily}
 \usage{
-ribbonplot(x, y, xprop, yprop, zlim, cm = NULL, steps = 4,
-  sigdigits = NULL, rounding = NULL, vertical = TRUE, ...)
+ribbonplot(
+  x,
+  y,
+  xprop,
+  yprop,
+  zlim,
+  cm = NULL,
+  steps = 4,
+  sigdigits = NULL,
+  rounding = NULL,
+  vertical = TRUE,
+  ...
+)
 }
 \arguments{
-\item{x}{x-axis location of the colourramp lower-left corner}
+\item{x}{y-axis location of the colourramp lower-left corner.}
 
 \item{xprop}{proportion of plot width to be allocated to the colour ramp width}
 
@@ -25,8 +36,6 @@ ribbonplot(x, y, xprop, yprop, zlim, cm = NULL, steps = 4,
 \item{rounding}{to how many decimal places should the labels be rounded}
 
 \item{vertical}{whether the ramp is places as a vertical or horizontal ribbon}
-
-\item{x}{y-axis location of the colourramp lower-left corner.}
 }
 \value{
 an image ribbon added to an existing plot.

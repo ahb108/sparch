@@ -4,11 +4,28 @@
 \alias{colRibbon}
 \title{Add a custom colour ramp to a plot}
 \usage{
-colRibbon(lut, breaks, xlim, ylim, nticks = 3, ticksize = 0.3,
-  labels = TRUE, at = NULL, vertical = TRUE, border.box = NULL,
-  col.ticks = "black", col.labs = "black", lwd.box = 1,
-  lwd.ticks = 1, lty.box = "solid", lty.ticks = "solid",
-  offset.labs = 0.5, cex.labs = 0.7, font.labs = 1, ...)
+colRibbon(
+  lut,
+  breaks,
+  xlim,
+  ylim,
+  nticks = 3,
+  ticksize = 0.3,
+  labels = TRUE,
+  at = NULL,
+  vertical = TRUE,
+  border.box = NULL,
+  col.ticks = "black",
+  col.labs = "black",
+  lwd.box = 1,
+  lwd.ticks = 1,
+  lty.box = "solid",
+  lty.ticks = "solid",
+  offset.labs = 0.5,
+  cex.labs = 0.7,
+  font.labs = 1,
+  ...
+)
 }
 \description{
 This function gives greater flexibility for the plotting of colour ramps for maps and other plots.

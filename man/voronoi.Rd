@@ -4,8 +4,16 @@
 \alias{voronoi}
 \title{Simple and weighted Voronoi tesselations}
 \usage{
-voronoi(x, ids, weights = NULL, win = NULL, maxdist = NULL,
-  nsteps = 36, verbose = TRUE, ...)
+voronoi(
+  x,
+  ids,
+  weights = NULL,
+  win = NULL,
+  maxdist = NULL,
+  nsteps = 36,
+  verbose = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{an object of class SpatialPoints*}

@@ -10,10 +10,14 @@ scaleBar(x, y, width, height, ...)
 \item{x}{Top left x coordinate}
 
 \item{y}{Top left y coordinate}
+
+\item{width}{The width of the bar (i.e. the scale, in the units of the plot)}
+
+\item{height}{The height of the bar (in the units of the plot)}
 }
 \value{
 a plotted polygon
 }
 \description{
-This function draw a simple scale-bar in the form of a box with a certain width and height (in map units) and hung on its top right corner.
+This function draw a simple scale-bar in the form of a box with a certain width and height (in map units) and hung on its top right corner. Further parameters such as colour and border can be modified in the normal way.
 }
